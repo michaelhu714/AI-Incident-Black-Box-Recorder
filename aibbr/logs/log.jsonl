@@ -1,0 +1,2 @@
+{"id": "dff50eeb-1d25-471b-bb67-c373eaaca7de", "timestamp": "2025-07-12T15:52:01.752910", "model_name": "DummyUpper", "input": "hello", "output": "HELLO", "success": true, "latency_sec": 0.0002, "tags": []}
+{"id": "cf9a311a-33d8-4c03-8da2-842e9f0fa7db", "timestamp": "2025-07-12T15:52:01.753272", "model_name": "DummyUpper", "input": "cause error", "output": "Model failed", "success": false, "latency_sec": 0.0, "tags": ["manual_crash"]}

@@ -17,6 +17,6 @@ Works with OpenAI, HuggingFace, sklearn, etc.
 ## 📦 Install
 
 ```bash
-git clone https://github.com/yourusername/aibbr.git
-cd aibbr
+git clone https://github.com/michaelhu714/AI-Incident-Black-Box-Recorder.git
+cd
 pip install -r requirements.txt

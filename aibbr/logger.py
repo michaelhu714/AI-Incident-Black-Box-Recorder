@@ -7,7 +7,7 @@ DB_PATH = "logs/logs.db"
 os.makedirs("logs", exist_ok=True)
 
 # Connect and initialize table
-conn = sqlite3.connect(DB_PATH)
+conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS logs (

@@ -1,35 +1,37 @@
 # run_model.py
-import argparse
-from main import AIBBRWrapper
 
-# Example dummy backends
-def dummy_upper(text):
-    return text.upper()
+from aibbr_wrapper import AIBBRWrapper
+from dummy_models import uppercase_model, reverse_model, failing_model
+from openai_backend import call_openai
+from huggingface_backend import hf_sentiment
+import sys
 
-def dummy_reverse(text):
-    return text[::-1]
-
-def dummy_fail(text):
-    raise ValueError("Simulated failure")
-
-# Backend registry
-MODEL_BACKENDS = {
-    "upper": dummy_upper,
-    "reverse": dummy_reverse,
-    "fail": dummy_fail,
+# Registry of available models
+MODELS = {
+    "uppercase": uppercase_model,
+    "reverse": reverse_model,
+    "fail": failing_model,
+    "openai": call_openai,
+    "huggingface": hf_sentiment,
 }
 
 def main():
-    parser = argparse.ArgumentParser(description="Run a model with AIBBR logging.")
-    parser.add_argument("--backend", choices=MODEL_BACKENDS.keys(), required=True, help="Which model backend to use")
-    parser.add_argument("--input", required=True, help="Input string to send to the model")
-    args = parser.parse_args()
+    if len(sys.argv) < 3:
+        print("Usage: python run_model.py <model_name> <input_text>")
+        print("Available models:", list(MODELS.keys()))
+        return
 
-    model_fn = MODEL_BACKENDS[args.backend]
-    wrapped = AIBBRWrapper(model_fn, model_name=args.backend)
+    model_name = sys.argv[1].lower()
+    input_text = " ".join(sys.argv[2:])
 
-    print("\nMODEL OUTPUT:")
-    print(wrapped.predict(args.input))
+    model_fn = MODELS.get(model_name)
+    if not model_fn:
+        print(f"Model '{model_name}' not found.")
+        return
+
+    wrapper = AIBBRWrapper(model_fn, model_name=model_name)
+    result = wrapper(input_text)
+    print("Output:", result)
 
 if __name__ == "__main__":
     main()

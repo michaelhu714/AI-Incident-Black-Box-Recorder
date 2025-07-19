@@ -1,4 +1,4 @@
-from main import AIBBRWrapper
+from aibbr_wrapper import AIBBRWrapper
 
 def dummy_model(text):
     if "error" in text:

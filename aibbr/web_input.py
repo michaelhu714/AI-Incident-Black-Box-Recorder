@@ -1,38 +1,28 @@
-# web_input.py
+# web_input.py (updated with backend dropdown)
 import streamlit as st
-from main import AIBBRWrapper
+from aibbr_wrapper import AIBBRWrapper
+from dummy_models import uppercase_model, reverse_model, failing_model
+from openai_backend import call_openai
+from huggingface_backend import hf_sentiment
 
-# Dummy backend models
-def dummy_upper(text):
-    return text.upper()
-
-def dummy_reverse(text):
-    return text[::-1]
-
-def dummy_fail(text):
-    raise ValueError("Simulated failure")
-
-# Registry of models
-MODEL_BACKENDS = {
-    "Uppercase Model": dummy_upper,
-    "Reverse Model": dummy_reverse,
-    "Failing Model": dummy_fail,
+# Model registry
+MODELS = {
+    "Uppercase": uppercase_model,
+    "Reverse": reverse_model,
+    "Failing Model": failing_model,
+    "OpenAI GPT": call_openai,
+    "HuggingFace Sentiment": hf_sentiment,
 }
 
-# Streamlit app
-st.set_page_config(page_title="Run AI Model", layout="centered")
-st.title("Test an AI Model")
+st.title("AIBBR: AI Behavior BlackBox Recorder")
+st.write("Test various models and log their behavior.")
 
-model_name = st.selectbox("Select a model backend", list(MODEL_BACKENDS.keys()))
-user_input = st.text_area("Enter input text")
+model_name = st.selectbox("Choose a model backend:", list(MODELS.keys()))
+user_input = st.text_area("Enter your input:", "Hello world!")
 
-if st.button("Run Model") and user_input:
-    model_fn = MODEL_BACKENDS[model_name]
-    wrapped = AIBBRWrapper(model_fn, model_name=model_name)
-
-    try:
-        result = wrapped.predict(user_input)
-        st.success("Model Output:")
-        st.code(result, language="text")
-    except Exception as e:
-        st.error(f"Model error: {e}")
+if st.button("Run Model"):
+    model_fn = MODELS[model_name]
+    wrapper = AIBBRWrapper(model_fn, model_name=model_name)
+    output = wrapper(user_input)
+    st.subheader("Output")
+    st.write(output)

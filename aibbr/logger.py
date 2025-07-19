@@ -2,6 +2,7 @@
 import sqlite3
 import os
 from utils import get_timestamp, generate_id
+import time 
 
 DB_PATH = "logs/logs.db"
 os.makedirs("logs", exist_ok=True)
@@ -49,3 +50,27 @@ def tag_last_entry(tag):
     tags.append(tag)
     cursor.execute("UPDATE logs SET tags = ? WHERE id = ?", (",".join(tags), log_id))
     conn.commit()
+
+
+def log_interaction(input_text, output_text, model_name, status="success", tags=None):
+    if tags is None:
+        tags = []
+    latency = 0.0  # Default latency
+
+    # Measure latency if output_text is not an error
+    if status == "success":
+        start_time = time.time()
+        # Simulate time for latency calculation (replace if you measure elsewhere)
+        end_time = time.time()
+        latency = round(end_time - start_time, 4)
+
+    log_entry({
+        "id": generate_id(),
+        "timestamp": get_timestamp(),
+        "model_name": model_name,
+        "input": input_text,
+        "output": output_text,
+        "success": status == "success",
+        "latency_sec": latency,
+        "tags": tags,
+    })
